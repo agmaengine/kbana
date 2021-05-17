@@ -1,3 +1,5 @@
+.idea/
+requirements.txt
 build/
 dist/
 venv/
