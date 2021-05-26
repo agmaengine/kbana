@@ -11,7 +11,7 @@ while True:
         rs.record_key(x)
     if keyboard.is_pressed("F11+F12"):
         rs.save_recording()
-        a.visualize_key_stroke_freq(rs.records, plot=True)
+        a.visualize_key_stroke_freq(rs.records,exclude_key_list=[29, 91, 56, 57, 14, 42, 54], plot=True)
         break
 plt.show()
 print(rs.records)
