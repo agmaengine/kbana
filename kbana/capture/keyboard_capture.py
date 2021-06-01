@@ -16,7 +16,7 @@ def get_keyboard_language():
     lid = klid & (2 ** 16 - 1)
     lid_hex = f"{lid:#0{6}x}"
     root = os.path.dirname(__file__)
-    with open(root + 'misc/win-language-id.json', 'r') as f:
+    with open(root + '/misc/win-language-id.json', 'r') as f:
         win_layout = json.load(f)
     return win_layout[lid_hex]
 
