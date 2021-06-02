@@ -2,11 +2,11 @@ import keyboard
 
 import kbana
 from kbana.analysis import Analysis
+from kbana.analysis import visualize_finger_load
 from kbana.capture import RecordingSession
 import matplotlib.pyplot as plt
 rs = RecordingSession()
 a = Analysis()
-fig = plt.figure()
 
 # def hold(keyboardEvent, key):
 #     if key in keyboardEvent.name:
@@ -16,10 +16,22 @@ fig = plt.figure()
 #                 print(f"{x.scan_code} {x.name} {x.event_type} ")
 #             if (key in x.name) and (x.event_type == 'up'):
 #                 break
+
+# layout = input('keyboard layout: ')
+# print(f"keyboard layout: {layout}")
+print("to start recording, press ctrl + r")
+while True:
+    x = keyboard.read_event()
+    # print(x)
+    if keyboard.is_pressed("ctrl + r"):
+        # handling up event of r and ctrl keys super buggy though need improvement
+        keyboard.read_event()
+        keyboard.read_event()
+        break
+print("recording, press escape to stop recording")
 language = kbana.get_keyboard_language()
 while True:
     x = keyboard.read_event()
-
     # shift key hold
     if 'shift' in x.name:
         rs.shift_toggle()
@@ -69,11 +81,15 @@ while True:
     # print(f"{x.scan_code} {x.name} {x.event_type} ")
     rs.record_key(x)
 
-    if keyboard.is_pressed("F11+F12"):
+    if keyboard.is_pressed("esc"):
         rs.save_recording()
-        a.visualize_key_stroke_freq(rs.records_key_only(), exclude_key_list=[29, 91, 56, 57, 14, 42, 54, 15, 58, 28, 'n/a'],
-                                    plot=True, log_scale=True)
+        fig, ax = plt.subplots(2)
+        a.visualize_key_stroke_freq(rs.records_key_only(),
+                                    exclude_key_list=[29, 91, 56, 57, 14, 42, 54, 15, 58, 28, 'n/a'],
+                                    axis_handle=ax[0], log_scale=True)
+        visualize_finger_load(rs.records_key_only(), axis_handle=ax[1])
+
         # a.visualize_key_stroke_freq(rs.records_key_only(), plot=True)
         break
-plt.show()
+# plt.show()
 print(rs.records)
