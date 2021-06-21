@@ -132,7 +132,7 @@ def visualize_key_stroke(records, keyboard_style=None, keyboard_offset=(0, 0), e
     return 0
 
 
-def visualize_finger_load(records, axis_handle=plt, numeric='freq'):
+def visualize_finger_load(records, axis_handle=plt, numeric='freq', exclude_shift=True):
     """
     visualize finger load of key strokes records
     """
@@ -144,6 +144,11 @@ def visualize_finger_load(records, axis_handle=plt, numeric='freq'):
     for k in finger_scode_map:
         finger_scode_map_temp[int(k)] = finger_scode_map[k]
     finger_scode_map = finger_scode_map_temp
+    if exclude_shift:
+        # remove left shift
+        finger_scode_map.pop(47)
+        # remove right shift
+        finger_scode_map.pop(54)
 
     # prepare finger_frequency
     total = 0
@@ -238,9 +243,10 @@ def simulate_records(text, layout):
 
     scode_name_map = scode_name_map[layout]
     # enable simulate shift key pressed in available layout
-    shift_key_name_map = None
     if layout in shift_key_name_map:
         shift_key_name_map = shift_key_name_map[layout]
+    else:
+        shift_key_name_map = None
     records = {}
     c_previous = None
     for c in text:
@@ -250,7 +256,7 @@ def simulate_records(text, layout):
             if c in shift_key_name_map:
                 # if previous character are shifted character
                 # then assume the shifted is hold and not add shift key to the simulated records
-                if c_previous not in shift_key_name_map:
+                if not c_previous or c_previous not in shift_key_name_map:
                     shift_key = shift_key_name_map[c]
                     if shift_key in records:
                         records[shift_key] += 1
