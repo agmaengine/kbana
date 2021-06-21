@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 from .analysis import visualize_key_stroke, visualize_finger_load, simulate_records
 
+
 def quick_plot(text, layout, numeric='freq'):
     """
     text: string
