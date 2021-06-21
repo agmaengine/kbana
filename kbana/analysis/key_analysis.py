@@ -232,15 +232,39 @@ def simulate_records(text, layout):
     with open(scode_name_map_path, 'r') as f:
         scode_name_map = json.load(f)
 
+    shift_key_name_map_path = os.path.dirname(__file__) + '/maps/shift_key_name_map.json'
+    with open(shift_key_name_map_path, 'r') as f:
+        shift_key_name_map = json.load(f)
+
     scode_name_map = scode_name_map[layout]
+    # enable simulate shift key pressed in available layout
+    shift_key_name_map = None
+    if layout in shift_key_name_map:
+        shift_key_name_map = shift_key_name_map[layout]
     records = {}
+    c_previous = None
     for c in text:
+        # if simulate shift key is available then simulate shift key pressed
+        if not shift_key_name_map:
+            # verify if the character is shifted character
+            if c in shift_key_name_map:
+                # if previous character are shifted character
+                # then assume the shifted is hold and not add shift key to the simulated records
+                if c_previous not in shift_key_name_map:
+                    shift_key = shift_key_name_map[c]
+                    if shift_key in records:
+                        records[shift_key] += 1
+                    else:
+                        records[shift_key] = 1
+        # map character into scan code
         if c in scode_name_map:
             key_stroke = scode_name_map[c]
             if key_stroke in records:
                 records[key_stroke] += 1
             else:
                 records[key_stroke] = 1
+
+        c_previous = c
     return records
 
 
