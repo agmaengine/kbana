@@ -19,7 +19,7 @@ def _transparent_cmap(cmap, n=255):
     """transparent heat map color map"""
     mycmap = cmap
     mycmap._init()
-    mycmap._lut[:,-1] = np.linspace(0, 0.8, n + 4)
+    mycmap._lut[:, -1] = np.linspace(0, 0.8, n + 4)
     return mycmap
 
 
