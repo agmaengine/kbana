@@ -64,38 +64,118 @@ class RecordingSession:
             records = load_records(self._filename)
 
         else:
-            records = {True: {}, False: {}}
+            records = {}
         self._records = records
+        # list of key strokes
+        self._records_2 = []
 
-    def record_key(self, key_event):
+    def _record_key_preserve_order(self, key_event):
+        record_book = self._records_2
+        if key_event.event_type == 'up':
+            k = key_event.scan_code
+            record_book.append(k)
+
+    def _shift_toggle_preserve_order(self, key_event):
+        shift_key = key_event.scan_code
+        if key_event.event_type == 'down':
+            self._records_2.append(shift_key)
+
+    def _record_key_just_count(self, key_event):
         record_book = self._records
         if key_event.event_type == 'up':
             k = key_event.scan_code
-            if k in record_book[self._shift_state]:
-                record_book[self._shift_state][k] += 1
+            if k in record_book:
+                record_book[k] += 1
             else:
-                record_book[self._shift_state][k] = 1
+                record_book[k] = 1
 
-    def shift_toggle(self):
-        if self._shift_state:
-            self._shift_state = False
-        else:
-            self._shift_state = True
+    def _shift_toggle_just_count(self, key_event):
+        shift_key = key_event.scan_code
+        if key_event.event_type == 'down':
+            if shift_key in self.records:
+                self.records[shift_key] += 1
+            else:
+                self.records[shift_key] = 1
+
+    def _record_key(self, key_event, mode='just_count'):
+        if mode == 'just_count':
+            self._record_key_just_count(key_event)
+        elif mode == 'preserve_order':
+            self._record_key_preserve_order(key_event)
+
+    def _shift_toggle(self, key_event, mode='just_count'):
+        if mode == 'just_count':
+            self._shift_toggle_just_count(key_event)
+        if mode == 'preserve_order':
+            self._shift_toggle_preserve_order(key_event)
+
+    def record(self):
+        while True:
+            x = keyboard.read_event()
+            # shift key hold
+            if 'shift' in x.name:
+                self._shift_toggle(x)
+                while True:
+                    x = keyboard.read_event()
+                    if ('shift' in x.name) and (x.event_type == 'up'):
+                        self._shift_toggle(x)
+                        break
+                    elif not ('shift' in x.name and x.event_type == 'down'):
+                        # print(f"{x.scan_code} {x.name} {x.event_type} ")
+                        self._record_key(x)
+            # control key hold
+            elif 'ctrl' in x.name:
+                while True:
+                    x = keyboard.read_event()
+                    if ('ctrl' in x.name) and (x.event_type == 'up'):
+                        break
+                    elif not ('ctrl' in x.name and x.event_type == 'down'):
+                        # print(f"{x.scan_code} {x.name} {x.event_type} ")
+                        self._record_key(x)
+            # alternate key hold
+            elif 'alt' in x.name:
+                while True:
+                    x = keyboard.read_event()
+                    if ('alt' in x.name) and (x.event_type == 'up'):
+                        break
+                    elif ('shift' in x.name) and (x.event_type == 'up'):
+                        # print("change language")
+                        language = get_keyboard_language()
+                    elif not ('alt' in x.name and x.event_type == 'down'):
+                        # print(f"{x.scan_code} {x.name} {x.event_type} ")
+                        self._record_key(x)
+            # windows key hold
+            elif 'windows' in x.name:
+                while True:
+                    x = keyboard.read_event()
+                    if ('windows' in x.name) and (x.event_type == 'up'):
+                        break
+                    elif ('space' in x.name) and (x.event_type == 'up'):
+                        # print("change language")
+                        language = get_keyboard_language()
+                    elif not ('windows' in x.name and x.event_type == 'down'):
+                        # print(f"{x.scan_code} {x.name} {x.event_type} ")
+                        self._record_key(x)
+            # ordinary key stroke
+            # print(f"{x.scan_code} {x.name} {x.event_type} ")
+            self._record_key(x)
+            if keyboard.is_pressed("esc"):
+                break
 
     def save_recording(self):
         with open(self._filename, "wb") as f:
             pickle.dump(self._records, f)
 
-    def records_key_only(self):
-        records = self.records
-        combined = records[False]
-        shifted = records[True]
-        for k in shifted:
-            if k in combined:
-                combined[k] += shifted[k]
-            else:
-                combined[k] = shifted[k]
-        return combined
+    # def records_key_only(self):
+    #     records = self.records
+    #     combined = records[False]
+    #     shifted = records[True]
+    #     for k in shifted:
+    #         if k in combined:
+    #             combined[k] += shifted[k]
+    #         else:
+    #             combined[k] = shifted[k]
+    #     return combined
 
     # use property decorator so that user cannot directly modified records
     @property
