@@ -322,6 +322,9 @@ def load_words_from_file(path_to_file, allow_duplicate=False):
 
 
 class Analysis:
+    """
+    class for gui development
+    """
     def __init__(self, keyboard_style=None):
         if not keyboard_style:
             self.keyboard_style = os.path.dirname(__file__) + '/keyboard_styles/MainType/blank'
