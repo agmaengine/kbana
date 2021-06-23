@@ -6,6 +6,7 @@ from kbana.capture import RecordingSession
 import matplotlib.pyplot as plt
 from tkinter import *
 from tkinter.filedialog import *
+from gui_element import MenuBar, StatusBar, AnalyseFrame
 
 
 def simple_record_interface():
@@ -24,7 +25,7 @@ def simple_record_interface():
     print("recording, press escape to stop recording")
     # language = kbana.get_keyboard_language()
 
-    rs.record()
+    rs.record_built_in()
     rs.save_recording()
     fig, ax = plt.subplots(2)
     a.visualize_key_stroke(rs.records,
@@ -36,23 +37,17 @@ def simple_record_interface():
 
 def gui():
     rs = RecordingSession()
-    a = Analysis
-
     root = Tk()
-    menu_bar = Menu(root)
-    # menu
-    file_menu = Menu(menu_bar, tearoff=0)
-    file_menu.add_command(label='Open')
-    menu_bar.add_cascade(label='File', menu=file_menu)
-
-    analysis_menu = Menu(menu_bar, tearoff=0)
-    analysis_menu.add_command(label='what')
-    menu_bar.add_cascade(label='Analysis', menu=analysis_menu)
+    root.title('kbana')
+    status_text = StringVar()
+    analyze_f = AnalyseFrame(root, status_text)
+    analyze_f.pack(fill=BOTH)
+    status_bar = StatusBar(root, status_text)
+    status_bar.pack(fill=X, anchor=S)
+    menu_bar = MenuBar(root, status_text, analyze_f.text_input, rs)
     root.config(menu=menu_bar)
-
-
-
     root.mainloop()
+
 
 if __name__ == '__main__':
     gui()
