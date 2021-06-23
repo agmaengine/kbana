@@ -7,3 +7,4 @@ kbana.egg-info/
 **/__pycache__/
 records/
 utils_dev/
+test/
