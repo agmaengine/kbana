@@ -194,6 +194,9 @@ def visualize_finger_load(records, axis_handle=plt, numeric='freq', exclude_shif
             finger_frequency[finger] += value
             total += value
 
+    if total == 0:
+        raise Exception("The record is empty")
+
     finger_image_path = os.path.dirname(__file__) + '/misc/hands.png'
     hands = mpimg.imread(finger_image_path)
     h, w, d = hands.shape
@@ -266,6 +269,8 @@ def simulate_records(text, layout):
                 Thai: 'kedmanee', 'pattachoat'
                 Endlish: 'qwerty'
     """
+    if layout is None:
+        raise ValueError("layout must be stringType")
     scode_name_map_path = os.path.dirname(__file__) + '/maps/scode_name_map.json'
     with open(scode_name_map_path, 'r') as f:
         scode_name_map = json.load(f)
@@ -284,7 +289,7 @@ def simulate_records(text, layout):
     c_previous = None
     for c in text:
         # if simulate shift key is available then simulate shift key pressed
-        if not shift_key_name_map:
+        if shift_key_name_map is not None:
             # verify if the character is shifted character
             if c in shift_key_name_map:
                 # if previous character are shifted character
@@ -304,6 +309,8 @@ def simulate_records(text, layout):
                 records[key_stroke] = 1
 
         c_previous = c
+        if len(records) == 0:
+            raise Exception('none of input text characters are recognized in this layout')
     return records
 
 
