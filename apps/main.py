@@ -9,7 +9,7 @@ from tkinter.filedialog import *
 from gui_element import MenuBar, StatusBar, AnalyseFrame
 
 
-def simple_record_interface():
+def cli():
     rs = RecordingSession()
     a = Analysis()
 
