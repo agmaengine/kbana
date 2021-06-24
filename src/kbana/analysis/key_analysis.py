@@ -320,8 +320,8 @@ def simulate_recording(text, layout):
                 recording[key_stroke] += 1
             else:
                 recording[key_stroke] = 1
-
         c_previous = c
+
     if len(recording) == 0:
         raise Exception('none of input text characters are recognized in this layout')
     return recording
