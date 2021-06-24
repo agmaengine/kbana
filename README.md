@@ -1,64 +1,91 @@
 # kbana
-keyboard key stroke recording and analysis modules
+keyboard keystroke recorder and analysis packages, the keystroke recorder related classes and functions are collected 
+in **capture module**, analysis tools are collected in **analysis module**. Currently, the analysis module 
+has only visualization of keystroke on keyboard and finger load. 
 
-## installation
+## Installation
 
 PYPI<br>
 `pip install kbana`
 
 from git repository<br>
-`git clone https://github.com/agmaengine/kbana.git`<br>
+`git clone https://github.com/agmaengine/kbana.git` <br>
 `pip install .`
 
-## there are two classes
-kbana.**capture.RecordingSession** <br>
-kbana.**analysis.Analysis**
+## kbana.capture
+### Recorder(filename=None, directory=None)
+if recording file is exists then increment the existing recording<br>
+if recording file is not exists then creating new recording file when save_recording is called<br>
+if recording file is provided directory is ignored<br>
+if directory is provided create directory if not exists. When save_recording is called, Recorder saves recording<br>
+with timestamps, when the Recorder is constructed, to the directory.<br>
+if none is provided, create records directory in the directory where the module is called.<br>
+When save_recording is called, Recorder saves recording with timestamps, when the Recorder is constructed,<br>
+to the directory.<br>
 
-kbana.capture.RecordingSession is used for managing recording's save-directory, and record keyboard.KeyboardEvent the recording is stores as dictionary of keystroke scan code
+**filename** (str): path to recording file (default: None)<br>
+**directory** (str): path to recording directory (default: None)
 
-kbana.analysis.Analysis is used for visualizing and anlysing keystroke records from the kbana.capture.RecordingSession and also managing configuration of visualizing keyboard style
+_kbana.capture.Recorder.**record()**_<br>
+record a single keystroke
 
-for quick usage see test/main.py
+_kbana.capture.Recorder.**record_built_in()**_<br>
+continuously record keystrokes, stop when pressing esc
 
-## kbana.capture.RecordingSession(filename=None, directory=None)
+_kbana.capture.Recorder.**save_recording(filename=None)**_<br>
+if filename is provided save recording to the filename, otherwise the behavior determined when Recorder is constructed
+**filename** (str): recording save file name
 
-**filename**: records file name <br>
-**directory**: records saving directory
+_kbana.capture.Recorder.**recording**_<br>
+return copy of recording
 
-filename and directory determined the behavior of **kbana.capture.RecordingSession.save_recording** method if filename is provided the **RecordingSession** will continue record key stroke to the file, if directory is provided the **RecordSession** will save each records into the directory with timestamp, if both filename and directory are provided directory will be ignored, else **RecordingSession** will save records with timestamp to the records directory relative to the file the object is called
+_kbana.capture.Recorder.**filename**_<br>
+return copy of filename
 
-### Methods
-### kbana.capture.RecordingSession.record_key(keyboard.KeyboardEvent)
-### kbana.capture.RecordingSession.save_recording()
+## kbana.analysis
+kbana.analysis._**visualize_key_stroke(recording, keyboard_style=None, keyboard_offset=(0, 0), exclude_key_list=[],
+                         axis_handle=plt, numeric='freq', log_scale=False)**_
 
-### properties
-### kbana.capture.RecordingSession.records
-### kbana.capture.RecordingSession.filename
+visualize keystroke on keyboard
 
-## kbana.analysis.Analysis(keyboard_style=None)
+keyboard_style options
+* 'MainType/blank'
+* 'MainType/Thai_Pattachoat_shift'
+* 'MainType/Thai_Pattachoat_no_shift'
 
-### methods
-### kbana.analysis.Analysis.visualize_key_stroke_freq(records, *args, **kwargs)
+numeric options
+* 'prop': proportion
+* 'percent': percent
+* 'freq': frequency
 
-see **kbana.analysis.visualize_key_stroke_freq()**
+kbana.analysis._**visualize_finger_load(recording, axis_handle=plt, numeric='freq', exclude_shift=True)**_
 
-## generic functions
-### kbana.capture.load_records(filename)
+visualize finger load
 
-input
-**filename**: records file name
-output
-**records**: records dict
+numeric options
+* 'prop': proportion
+* 'percent': percent
+* 'freq': frequency
 
-### kbana.analysis.visualize_key_stroke_freq(records, keyboard_style=None, keyboard_offset=(0, 0), plot=False)
+kbana.analysis._**simulate_recording(text, layout)**_
 
-input
-**records**: records from RecordingSesstion
-return
-if plot is Flase
-**matplotlib.pyplot.figure**: plot for heatmap of key stroke frequency on keyboard
-if plot is True
-**0** and just plot on matplotlib.pyplot active axes
+**text** (str)
+
+simulate recording from input text
+
+layout options
+* English
+  * 'qwerty'
+* Thai
+  * 'kedmanee'
+  * 'pattachoat'
+
+kbana.analysis._**load_words_from_file(path_to_file, allow_duplicate=False)**_
+
+read list of word from text file. if words are separated by space, remove duplicated word.
+
+return text (str)
+
 
 # Add more keyboard styles
 add your style directory in kbana/analysis/keyboard_styles
