@@ -2,12 +2,12 @@ import keyboard
 import kbana
 from kbana.analysis import Analysis
 from kbana.analysis import visualize_finger_load
-from kbana.capture import RecordingSession
+from kbana.capture import Recorder
 import matplotlib.pyplot as plt
 
 
 def simple_record_interface():
-    rs = RecordingSession()
+    rs = Recorder()
     a = Analysis()
 
     # application response

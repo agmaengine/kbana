@@ -1,6 +1,6 @@
 import keyboard
 from kbana.analysis import Analysis
-from kbana.capture import RecordingSession
+from kbana.capture import Recorder
 import matplotlib.pyplot as plt
 import argparse
 
@@ -14,7 +14,7 @@ args = parser.parse_args()
 
 # main program
 def main():
-    rs = RecordingSession()
+    rs = Recorder()
     a = Analysis()
     fig = plt.figure()
     while True:

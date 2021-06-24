@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from .analysis import visualize_key_stroke, visualize_finger_load, simulate_records
+from .analysis import visualize_key_stroke, visualize_finger_load, simulate_recording
 
 
 def quick_plot(text, layout=None, numeric='freq'):
@@ -15,7 +15,7 @@ def quick_plot(text, layout=None, numeric='freq'):
     if type(text) == dict:
         records = text
     elif type(text) == str:
-        records = simulate_records(text, layout)
+        records = simulate_recording(text, layout)
     else:
         raise ValueError('text must be stringType or dictionaryType')
     fig, ax = plt.subplots(2)
