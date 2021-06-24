@@ -223,7 +223,6 @@ class AnalyseFrame(Frame):
             self.status.set(message)
             return 0
         self.status.set('Analyzing')
-        self.status.update()
         # fig = quick_plot(text, layout=self.option_var.get(), numeric='percent')
         try:
             fig = quick_plot(text, layout=self.option_var.get(), numeric='percent')
@@ -234,9 +233,7 @@ class AnalyseFrame(Frame):
             self.status.set(e)
         else:
             self.status.set('Done')
-            self.status.update()
             self.status.set('Ready')
-            self.status.update()
         
     def clear_text(self):
         answer = askyesno('Warning', 'You are about to remove all text, do you want to continue?')
