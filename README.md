@@ -1,6 +1,15 @@
 # kbana
 keyboard key stroke recording and analysis modules
 
+## installation
+
+PYPI<br>
+`pip install kbana`
+
+from git repository<br>
+`git clone https://github.com/agmaengine/kbana.git`<br>
+`pip install .`
+
 ## there are two classes
 kbana.**capture.RecordingSession** <br>
 kbana.**analysis.Analysis**
