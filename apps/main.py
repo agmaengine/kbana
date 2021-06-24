@@ -16,7 +16,7 @@ from kbana.capture import Recorder
 import matplotlib.pyplot as plt
 from tkinter import *
 from tkinter.filedialog import *
-from gui_element import MenuBar, StatusBar, AnalyseFrame
+from gui_element import MenuBar, StatusBar, AnalyseFrame, _on_key_release
 
 
 def cli():
@@ -49,6 +49,7 @@ def gui():
     rs = Recorder()
     root = Tk()
     root.title('kbana')
+    root.bind_all("<Key>", _on_key_release, "+")
     status_text = StringVar()
     analyze_f = AnalyseFrame(root, status_text)
     analyze_f.pack(fill=BOTH)
