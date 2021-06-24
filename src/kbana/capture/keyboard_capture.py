@@ -43,10 +43,27 @@ def flatten_recording(records):
     return combined
 
 
-class RecordingSession:
+class Recorder:
     def __init__(self, filename=None, directory=None):
+        """
+        arguments
+        filename (str): path to recording file (default: None)
+        directory (str): path to recording directory (default: None)
+
+        if recording file is exists then increment the existing recording
+        if recording file is not exists then creating new recording file when save_recording is called
+        if recording file is provided directory is ignored
+        if directory is provided create directory if not exists. When save_recording is called, Recorder saves recording
+        with timestamps, when the Recorder is constructed, to the directory.
+        if none is provided, create records directory in the directory where the module is called.
+        When save_recording is called, Recorder saves recording with timestamps, when the Recorder is constructed,
+        to the directory.
+        """
         self.time_stamp = datetime.datetime.now().strftime("%y_%m_%d-%H_%M_%S")
         self._shift_state = False
+        self._filename = None
+        self._directory = None
+        # parsing input
         if filename:
             # if filename is provided ignore directory
             self._filename = filename
@@ -56,17 +73,20 @@ class RecordingSession:
             if directory[-1] != '/':
                 directory = directory + '/'
             self._directory = directory
-            self._filename = directory + filename
         else:
-            # if both are not provided generate filenames and records directory
+            # if both are not provided create records directory
             # relative to the file that call this module
             if not os.path.exists('./records'):
                 os.mkdir('./records')
-            self._filename = "./records/recordings-" + self.time_stamp + '.pyd'
+            self._directory = './records/'
+
+        # if filename is not provided
+        if self._filename is None:
+            self._filename = f"{self._directory}recording-{self.time_stamp}.pyd"
+
         # if provided filename exists continue record from the recording otherwise create new records
         if os.path.exists(self._filename):
             recording = load_recording(self._filename)
-
         else:
             recording = {}
         self._recording = recording
