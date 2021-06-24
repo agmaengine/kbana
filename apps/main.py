@@ -12,7 +12,7 @@ except ModuleNotFoundError:
 import keyboard
 from kbana.analysis import Analysis
 from kbana.analysis import visualize_finger_load
-from kbana.capture import RecordingSession
+from kbana.capture import Recorder
 import matplotlib.pyplot as plt
 from tkinter import *
 from tkinter.filedialog import *
@@ -20,7 +20,7 @@ from gui_element import MenuBar, StatusBar, AnalyseFrame
 
 
 def cli():
-    rs = RecordingSession()
+    rs = Recorder()
     a = Analysis()
 
     # application response
@@ -46,7 +46,7 @@ def cli():
 
 
 def gui():
-    rs = RecordingSession()
+    rs = Recorder()
     root = Tk()
     root.title('kbana')
     status_text = StringVar()
