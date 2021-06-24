@@ -133,8 +133,6 @@ def visualize_key_stroke(records, keyboard_style=None, keyboard_offset=(0, 0), e
     # remove ticks
     axis_handle.set_xticks([])
     axis_handle.set_yticks([])
-    # axis_handle.xticks([], [])
-    # axis_handle.yticks([], [])
     # preparing label data
     value_label_dict = {'freq': [], 'prop': [], 'percent': []}
     for m in xy_z:
@@ -253,8 +251,6 @@ def visualize_finger_load(records, axis_handle=plt, numeric='freq', exclude_shif
     # remove ticks
     axis_handle.set_xticks([])
     axis_handle.set_yticks([])
-    # axis_handle.xticks([], [])
-    # axis_handle.yticks([], [])
     return finger_frequency
 
 

@@ -1,5 +1,15 @@
+
+try:
+    import kbana
+except ModuleNotFoundError:
+    # import local module
+    import os
+    import sys
+
+    local_module_path = os.path.dirname(os.path.dirname(__file__))
+    sys.path.append(local_module_path)
+
 import keyboard
-import kbana
 from kbana.analysis import Analysis
 from kbana.analysis import visualize_finger_load
 from kbana.capture import RecordingSession
@@ -28,11 +38,11 @@ def cli():
     rs.record_built_in()
     rs.save_recording()
     fig, ax = plt.subplots(2)
-    a.visualize_key_stroke(rs.records,
+    a.visualize_key_stroke(rs.recording,
                            exclude_key_list=[29, 91, 56, 57, 14, 42, 54, 15, 58, 28, 'n/a'],
                            axis_handle=ax[0], log_scale=True)
-    visualize_finger_load(rs.records, axis_handle=ax[1])
-    print(rs.records)
+    visualize_finger_load(rs.recording, axis_handle=ax[1])
+    print(rs.recording)
 
 
 def gui():

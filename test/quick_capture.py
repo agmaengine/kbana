@@ -23,10 +23,10 @@ def main():
             rs.record_key(x)
         if keyboard.is_pressed("F11+F12"):
             rs.save_recording()
-            a.visualize_key_stroke_freq(rs.records, plot=True)
+            a.visualize_key_stroke_freq(rs.recording, plot=True)
             break
     plt.show()
-    print(rs.records)
+    print(rs.recording)
 
 
 if __name__ == "__main--":

@@ -1,7 +1,7 @@
 from tkinter import *
 from tkinter.filedialog import askopenfilename, asksaveasfilename
 from tkinter.messagebox import askyesno
-from kbana import quick_plot, load_records
+from kbana import quick_plot, load_recording
 
 from matplotlib.backends.backend_tkagg import (
     FigureCanvasTkAgg, NavigationToolbar2Tk)
@@ -33,11 +33,11 @@ def thread_function(f):
     return wrapper
 
 
-def _quick_plot(records, status):
-    if len(records) == 0:
+def _quick_plot(recording, status):
+    if len(recording) == 0:
         status.set('The record is empty')
     else:
-        fig = quick_plot(records, numeric='percent')
+        fig = quick_plot(recording, numeric='percent')
         fig.set_size_inches(12, 9)
         graph_frame = PopMatplotlibCanvas(fig)
 
@@ -77,7 +77,7 @@ class MenuBar(Menu):
     def visualize_record(self):
         self.status.set('Choose record file')
         path_to_file = askopenfilename()
-        records = load_records(path_to_file)
+        records = load_recording(path_to_file)
         _quick_plot(records, self.status)
 
     def record_key_stroke(self):
@@ -85,7 +85,7 @@ class MenuBar(Menu):
         panel.record()
 
     def clear_record(self):
-        self.record_session._records = {}
+        self.record_session._recording = {}
 
 
 class RecordPanel(Toplevel):
@@ -124,10 +124,10 @@ class RecordPanel(Toplevel):
     def clear(self):
         answer = askyesno("Warning", "You are about to remove all of records, do you want to continue?")
         if answer:
-            self.record_session._records = {}
+            self.record_session._recording = {}
 
     def visualize(self):
-        _quick_plot(self.record_session.records, self.status)
+        _quick_plot(self.record_session.recording, self.status)
 
     @thread_function
     def _record_coro(self):
