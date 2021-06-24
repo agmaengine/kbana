@@ -22,5 +22,5 @@ def quick_plot(text, layout=None, numeric='freq'):
     visualize_key_stroke(records, log_scale=False, axis_handle=ax[0],
                          exclude_key_list=[29, 91, 56, 57, 14, 42, 54, 15, 58, 28, 'n/a'],
                          numeric=numeric)
-    visualize_finger_load(records, axis_handle=ax[1], numeric=numeric)
+    visualize_finger_load(records, axis_handle=ax[1], numeric=numeric, exclude_shift=False)
     return fig
