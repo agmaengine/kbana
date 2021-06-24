@@ -7,7 +7,7 @@ PYPI<br>
 `pip install kbana`
 
 from git repository<br>
-`git clone https://github.com/agmaengine/kbana.git`
+`git clone https://github.com/agmaengine/kbana.git`<br>
 `pip install .`
 
 ## there are two classes
