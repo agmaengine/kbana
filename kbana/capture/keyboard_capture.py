@@ -109,7 +109,7 @@ class RecordingSession:
         if mode == 'preserve_order':
             self._shift_toggle_preserve_order(key_event)
 
-    def record(self):
+    def record_built_in(self):
         while True:
             x = keyboard.read_event()
             # shift key hold
@@ -162,9 +162,64 @@ class RecordingSession:
             if keyboard.is_pressed("esc"):
                 break
 
-    def save_recording(self):
-        with open(self._filename, "wb") as f:
-            pickle.dump(self._records, f)
+    def record(self):
+        x = keyboard.read_event()
+        # shift key hold
+        if 'shift' in x.name:
+            self._shift_toggle(x)
+            while True:
+                x = keyboard.read_event()
+                if ('shift' in x.name) and (x.event_type == 'up'):
+                    self._shift_toggle(x)
+                    break
+                elif not ('shift' in x.name and x.event_type == 'down'):
+                    # print(f"{x.scan_code} {x.name} {x.event_type} ")
+                    self._record_key(x)
+        # control key hold
+        elif 'ctrl' in x.name:
+            while True:
+                x = keyboard.read_event()
+                if ('ctrl' in x.name) and (x.event_type == 'up'):
+                    break
+                elif not ('ctrl' in x.name and x.event_type == 'down'):
+                    # print(f"{x.scan_code} {x.name} {x.event_type} ")
+                    self._record_key(x)
+        # alternate key hold
+        elif 'alt' in x.name:
+            while True:
+                x = keyboard.read_event()
+                if ('alt' in x.name) and (x.event_type == 'up'):
+                    break
+                elif ('shift' in x.name) and (x.event_type == 'up'):
+                    # print("change language")
+                    language = get_keyboard_language()
+                elif not ('alt' in x.name and x.event_type == 'down'):
+                    # print(f"{x.scan_code} {x.name} {x.event_type} ")
+                    self._record_key(x)
+        # windows key hold
+        elif 'windows' in x.name:
+            while True:
+                x = keyboard.read_event()
+                if ('windows' in x.name) and (x.event_type == 'up'):
+                    break
+                elif ('space' in x.name) and (x.event_type == 'up'):
+                    # print("change language")
+                    language = get_keyboard_language()
+                elif not ('windows' in x.name and x.event_type == 'down'):
+                    # print(f"{x.scan_code} {x.name} {x.event_type} ")
+                    self._record_key(x)
+        # ordinary key stroke
+        # print(f"{x.scan_code} {x.name} {x.event_type} ")
+        self._record_key(x)
+        return 0
+
+    def save_recording(self, filename=None):
+        if filename:
+            with open(filename, "wb") as f:
+                pickle.dump(self._records, f)
+        else:
+            with open(self._filename, "wb") as f:
+                pickle.dump(self._records, f)
 
     # def records_key_only(self):
     #     records = self.records
