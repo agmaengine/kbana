@@ -1,4 +1,14 @@
-import kbana
+
+try:
+    import kbana
+except ModuleNotFoundError:
+    # import local module
+    import os
+    import sys
+
+    local_module_path = os.path.dirname(os.path.dirname(__file__))
+    sys.path.append(local_module_path)
+
 import keyboard
 from kbana.analysis import Analysis
 from kbana.analysis import visualize_finger_load
