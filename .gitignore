@@ -8,3 +8,4 @@ kbana.egg-info/
 records/
 utils_dev/
 test/
+**/*.spec
