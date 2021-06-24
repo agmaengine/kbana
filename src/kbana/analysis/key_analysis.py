@@ -173,7 +173,7 @@ def visualize_finger_load(recording, axis_handle=plt, numeric='freq', exclude_sh
     finger_scode_map = finger_scode_map_temp
     if exclude_shift:
         # remove left shift
-        finger_scode_map.pop(47)
+        finger_scode_map.pop(42)
         # remove right shift
         finger_scode_map.pop(54)
 
@@ -288,14 +288,31 @@ def simulate_recording(text, layout):
         if shift_key_name_map is not None:
             # verify if the character is shifted character
             if c in shift_key_name_map:
-                # if previous character are shifted character
-                # then assume the shifted is hold and not add shift key to the simulated recording
-                if not c_previous or c_previous not in shift_key_name_map:
-                    shift_key = shift_key_name_map[c]
+                shift_key = shift_key_name_map[c]
+                # if previous character is not None
+                if c_previous is not None:
+                    # if previous character is not shifted character or
+                    # previous character is shifted character but shift key is in the opposite hand
+                    if c_previous not in shift_key_name_map:
+                        # record shift key pressed
+                        if shift_key in recording:
+                            recording[shift_key] += 1
+                        else:
+                            recording[shift_key] = 1
+                    elif c_previous in shift_key_name_map:
+                        shift_key_previous = shift_key_name_map[c_previous]
+                        if shift_key_previous != shift_key:
+                            if shift_key in recording:
+                                recording[shift_key] += 1
+                            else:
+                                recording[shift_key] = 1
+                # if first character are shifted character
+                else:
                     if shift_key in recording:
                         recording[shift_key] += 1
                     else:
                         recording[shift_key] = 1
+                # other wise assume shift is held
         # map character into scan code
         if c in scode_name_map:
             key_stroke = scode_name_map[c]
@@ -305,8 +322,8 @@ def simulate_recording(text, layout):
                 recording[key_stroke] = 1
 
         c_previous = c
-        if len(recording) == 0:
-            raise Exception('none of input text characters are recognized in this layout')
+    if len(recording) == 0:
+        raise Exception('none of input text characters are recognized in this layout')
     return recording
 
 
