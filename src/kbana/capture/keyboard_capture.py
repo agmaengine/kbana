@@ -30,6 +30,17 @@ def load_recording(filename):
         records = pickle.load(f)
     return records
 
+def save_recording(recording, filename):
+    path_to_file, ext = os.path.splitext(filename)
+    if ext.lower() == ".json":
+        with open(filename, "w") as f:
+            json.dump(recording, f)
+    else:
+        filename = f"{path_to_file}.pyd"
+        with open(filename, "wb") as f:
+            pickle.dump(recording, f)
+    return 0
+
 
 def flatten_recording(records):
     records = records
