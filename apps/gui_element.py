@@ -1,7 +1,8 @@
 from tkinter import *
 from tkinter.filedialog import askopenfilename, asksaveasfilename
 from tkinter.messagebox import askyesno
-from kbana import quick_plot, load_recording
+from kbana import quick_plot, load_recording, save_recording
+from kbana.analysis import simulate_recording
 
 from matplotlib.backends.backend_tkagg import (
     FigureCanvasTkAgg, NavigationToolbar2Tk)
@@ -37,16 +38,18 @@ def _quick_plot(recording, status):
     if len(recording) == 0:
         status.set('The record is empty')
     else:
-        fig = quick_plot(recording, numeric='percent')
+        fig, recording = quick_plot(recording, numeric='percent')
         fig.set_size_inches(12, 9)
         graph_frame = PopMatplotlibCanvas(fig)
 
 
 class MenuBar(Menu):
-    def __init__(self, master, status, text_input, record_session):
+    def __init__(self, master, status, analysis_frame, record_session):
         Menu.__init__(self, master)
         file_menu = Menu(self, tearoff=0)
         file_menu.add_command(label='Open text', command=self.open_text)
+        file_menu.add_separator()
+        file_menu.add_command(label='Export Recording', command=self.export_recording)
         file_menu.add_separator()
         file_menu.add_command(label='Quit', command=master.quit)
         tools_menu = Menu(self, tearoff=0)
@@ -58,7 +61,8 @@ class MenuBar(Menu):
         self.add_cascade(label='Tools', menu=tools_menu)
 
         self.status = status
-        self.text_input = text_input
+        self.text_input = analysis_frame.text_input
+        self.analysis_frame = analysis_frame
         self.record_session = record_session
 
     def open_text(self):
@@ -73,6 +77,29 @@ class MenuBar(Menu):
                 self.text_input.insert('1.0', text)
             else:
                 self.status.set('File is not selected')
+
+    def export_recording(self):
+        if self.analysis_frame.recording is not None:
+            self.status.set("loading simulated record")
+            recording = self.analysis_frame.recording
+        else:
+            self.status.set("simulating recording")
+            text = self.analysis_frame.text_input_read()
+            if text != 0:
+                recording = simulate_recording(text, layout=self.analysis_frame.option_var.get())
+            else:
+                return 0
+        if recording is not None:
+            self.status.set("saving...")
+            save_filename = asksaveasfilename(defaultextension=".pyd",
+                                              filetypes=(("python dict", "*.pyd"), ("json", "*.json")))
+            if save_filename == "":
+                self.status.set("save file name is not specified")
+            else:
+                save_recording(recording, save_filename)
+                self.status.set("Done")
+                self.status.set("Ready")
+        return 0
 
     def visualize_record(self):
         self.status.set('Choose record file')
@@ -154,9 +181,13 @@ class StatusBar(Frame):
         Frame.__init__(self, master)
         self.status_text = status_stringvar
         self.status_text.set("Ready")
-        status = Label(textvariable=self.status_text, relief=RIDGE)
-        status.config(anchor=E)
-        status.pack(fill=X, padx=5, pady=2.5)
+        self.status = Label(textvariable=self.status_text, relief=RIDGE)
+        self.status.config(anchor=E)
+        self.status.pack(fill=X, padx=5, pady=2.5)
+
+    def set(self, status_text):
+        self.status_text.set(status_text)
+        self.status.update()
 
 
 class MatplotlibCanvas(Frame):
@@ -214,7 +245,9 @@ class AnalyseFrame(Frame):
         clear_button.pack(side=LEFT)
         panel.pack(padx=5, pady=2.5, fill=X)
 
-    def analyze(self):
+        self.recording = None
+
+    def text_input_read(self):
         text = self.text_input.get('1.0', END)
         # if the input text is blank text return '\n, if input text is blank terminate function'
         if text == '\n':
@@ -222,10 +255,16 @@ class AnalyseFrame(Frame):
             print(message)
             self.status.set(message)
             return 0
+        return text
+
+    def analyze(self):
+        text = self.text_input_read()
+        if text == 0:
+            return 0
         self.status.set('Analyzing')
         # fig = quick_plot(text, layout=self.option_var.get(), numeric='percent')
         try:
-            fig = quick_plot(text, layout=self.option_var.get(), numeric='percent')
+            fig, self.recording = quick_plot(text, layout=self.option_var.get(), numeric='percent')
             fig.set_size_inches(12, 9)
             graph_frame = PopMatplotlibCanvas(fig)
         except Exception as e:
